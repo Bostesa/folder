@@ -6,42 +6,177 @@
     <title>{% block title %}Car Company App{% endblock %}</title>
     
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        
-        /* Navigation Bar Styling */
+        :root {
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --border: #e5e7eb;
+            --header: #111827;
+            --row-alt: #f9fafb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 24px 32px 48px;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        h1 { font-size: 26px; margin: 8px 0 16px; }
+        h2 { font-size: 18px; margin: 24px 0 12px; color: var(--header); }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Navigation Bar */
         .navbar {
-            background-color: #333;
+            background: var(--header);
+            border-radius: 10px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: var(--shadow);
             overflow: hidden;
-            border-radius: 4px;
-            margin-bottom: 20px;
         }
         .navbar a {
-            float: left;
-            display: block;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 14px 16px;
+            color: #e5e7eb;
+            padding: 12px 16px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 2px solid transparent;
+            transition: background .15s, color .15s, border-color .15s;
         }
         .navbar a:hover {
-            background-color: #ddd;
-            color: black;
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            border-bottom-color: var(--primary);
+            text-decoration: none;
         }
         .navbar .nav-right {
-            float: right;
+            margin-left: auto;
+            display: flex;
+            flex-wrap: wrap;
         }
 
-        /* Flash message styling */
-        .flash-messages { list-style-type: none; padding: 0; margin-bottom: 20px; }
-        .flash-message { padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
-        .flash-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .flash-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
-        th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
-        form { margin: 15px 0; }
-        input, select { margin: 3px; }
-        
+        /* Flash messages */
+        .flash-messages { list-style: none; padding: 0; margin: 0 0 20px; }
+        .flash-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            border-left: 4px solid;
+        }
+        .flash-error { background: #fef2f2; color: #991b1b; border-color: #ef4444; }
+        .flash-success { background: #f0fdf4; color: #166534; border-color: #22c55e; }
+
+        /* Main */
+        main {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Tables */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 12px;
+            font-size: 14px;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        thead tr, table tr:first-child {
+            background: var(--header);
+        }
+        th {
+            color: #f3f4f6;
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        tbody tr:nth-child(even), table tr:nth-child(even):not(:first-child) {
+            background: var(--row-alt);
+        }
+        tbody tr:hover, table tr:hover:not(:first-child) {
+            background: #eef2ff;
+        }
+
+        /* Forms */
+        form { margin: 12px 0; }
+        form label {
+            display: inline-flex;
+            flex-direction: column;
+            font-size: 12px;
+            color: var(--muted);
+            margin: 4px 8px 4px 0;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+        input[type="text"], input[type="email"], input[type="password"],
+        input[type="number"], input[type="date"], select {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text);
+            background: #fff;
+            font-family: inherit;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+        input[type="checkbox"] {
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        input[type="submit"] {
+            padding: 9px 16px;
+            border: none;
+            border-radius: 6px;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background .15s, transform .05s;
+        }
+        input[type="submit"]:hover { background: var(--primary-hover); }
+        input[type="submit"]:active { transform: translateY(1px); }
+
+        /* Search form layout */
+        form[method="GET"] {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: var(--row-alt);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        form[method="GET"] input[type="text"],
+        form[method="GET"] input[type="date"] { min-width: 200px; }
+
         {% block styles %}{% endblock %}
     </style>
 </head>

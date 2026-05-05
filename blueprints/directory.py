@@ -131,10 +131,21 @@ def customers():
         where = ""
         if q:
             q_digits = ''.join(ch for ch in q if ch.isdigit())
-            where = "WHERE c.name LIKE %s OR c.email LIKE %s OR cp.phone LIKE %s OR cp.phone LIKE %s"
             like = f"%{q}%"
-            digit_like = f"%{q_digits}%"
-            params = (like, like, like, digit_like)
+            if q_digits:
+                where = """WHERE c.customer_id IN (
+                    SELECT DISTINCT c2.customer_id FROM Customer c2
+                    LEFT JOIN CustomerPhone cp2 ON c2.customer_id = cp2.customer_id
+                    WHERE c2.name LIKE %s OR c2.email LIKE %s OR cp2.phone LIKE %s OR cp2.phone LIKE %s
+                )"""
+                params = (like, like, like, f"%{q_digits}%")
+            else:
+                where = """WHERE c.customer_id IN (
+                    SELECT DISTINCT c2.customer_id FROM Customer c2
+                    LEFT JOIN CustomerPhone cp2 ON c2.customer_id = cp2.customer_id
+                    WHERE c2.name LIKE %s OR c2.email LIKE %s OR cp2.phone LIKE %s
+                )"""
+                params = (like, like, like)
 
         customers_data = fetch_all(
             f"""

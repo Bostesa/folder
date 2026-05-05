@@ -3,64 +3,82 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block styles %}
-    .dashboard-container { 
-            padding: 20px; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            max-width: 700px;
-        }
-        .session-info {
-            background-color: #e9ecef;
-            padding: 10px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-        .logout-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #dc3545;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .logout-btn:hover { background-color: #c82333; }
+    .session-info {
+        background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+        padding: 18px 22px;
+        border-radius: 10px;
+        border: 1px solid #c7d2fe;
+        margin-bottom: 24px;
+        font-size: 14px;
+    }
+    .session-info strong { color: #1d4ed8; }
+    .page-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+        list-style: none;
+        padding: 0;
+        margin: 12px 0 24px;
+    }
+    .page-grid li a {
+        display: block;
+        padding: 16px 18px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 600;
+        color: #1f2937;
+        transition: transform .1s, box-shadow .15s, border-color .15s;
+    }
+    .page-grid li a:hover {
+        text-decoration: none;
+        border-color: #2563eb;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.12);
+        transform: translateY(-2px);
+    }
+    .logout-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        background: #dc2626;
+        color: #fff !important;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    .logout-btn:hover { background: #b91c1c; text-decoration: none; }
 {% endblock %}
 
 {% block content %}
-    <div class="dashboard-container">
-        <h1>Car Company Dashboard</h1>
-        <p>You are logged in to the car company database app.</p>
-        
-        <div class="session-info">
-            User: <strong>{{ session.get('username') }}</strong><br>
-            Role: <strong>{{ session.get('role_name') }}</strong><br>
-            User ID: <strong>{{ user_id }}</strong>
-        </div>
+    <h1>Dashboard</h1>
+    <p style="color:#6b7280;margin-top:0;">Welcome to the Car Company database app.</p>
 
-        <h2>Pages</h2>
-        <ul>
-            <li><a href="/customers">Customers</a></li>
-            <li><a href="/vehicles">Vehicles</a></li>
-            {% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
-                <li><a href="/sales">Sales</a></li>
-            {% endif %}
-            {% if session.get('role_name') in ['Service Staff', 'Administrator'] %}
-                <li><a href="/services">Services</a></li>
-            {% endif %}
-            {% if session.get('role_name') in ['Finance Staff', 'Administrator'] %}
-                <li><a href="/loans">Loans</a></li>
-            {% endif %}
-            {% if session.get('role_name') in ['Accountant', 'Administrator'] %}
-                <li><a href="/accounting">Accounting</a></li>
-            {% endif %}
-            <li><a href="/reports">Reports</a></li>
-            {% if session.get('role_name') == 'Administrator' %}
-                <li><a href="/admin/users">Admin Users</a></li>
-                <li><a href="/admin/divisions">Admin Divisions</a></li>
-                <li><a href="/admin/departments">Admin Departments</a></li>
-            {% endif %}
-        </ul>
-        <p><a href="/logout" class="logout-btn">Log Out</a></p>
+    <div class="session-info">
+        <strong>User:</strong> {{ session.get('username') }} &nbsp;·&nbsp;
+        <strong>Role:</strong> {{ session.get('role_name') }} &nbsp;·&nbsp;
+        <strong>ID:</strong> {{ user_id }}
     </div>
+
+    <h2>Pages</h2>
+    <ul class="page-grid">
+        <li><a href="/customers">Customers</a></li>
+        <li><a href="/vehicles">Vehicles</a></li>
+        {% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
+            <li><a href="/sales">Sales</a></li>
+        {% endif %}
+        {% if session.get('role_name') in ['Service Staff', 'Administrator'] %}
+            <li><a href="/services">Services</a></li>
+        {% endif %}
+        {% if session.get('role_name') in ['Finance Staff', 'Administrator'] %}
+            <li><a href="/loans">Loans</a></li>
+        {% endif %}
+        {% if session.get('role_name') in ['Accountant', 'Administrator'] %}
+            <li><a href="/accounting">Accounting</a></li>
+        {% endif %}
+        <li><a href="/reports">Reports</a></li>
+        {% if session.get('role_name') == 'Administrator' %}
+            <li><a href="/admin/users">Admin Users</a></li>
+            <li><a href="/admin/divisions">Admin Divisions</a></li>
+            <li><a href="/admin/departments">Admin Departments</a></li>
+        {% endif %}
+    </ul>
+    <p><a href="/logout" class="logout-btn">Log Out</a></p>
 {% endblock %}
