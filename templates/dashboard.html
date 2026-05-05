@@ -3,82 +3,158 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block styles %}
-    .session-info {
-        background: linear-gradient(135deg, #eef2ff, #e0f2fe);
-        padding: 18px 22px;
-        border-radius: 10px;
-        border: 1px solid #c7d2fe;
-        margin-bottom: 24px;
-        font-size: 14px;
+    .hero {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 26px;
     }
-    .session-info strong { color: #1d4ed8; }
+    .hero .lede { color: #8b94a7; max-width: 540px; margin: 0; }
+    .session-info {
+        background: linear-gradient(180deg, #1a1f2b, #141822);
+        padding: 14px 18px;
+        border-radius: 12px;
+        border: 1px solid #2a3142;
+        font-size: 13px;
+        font-family: "JetBrains Mono", monospace;
+        color: #b9c0cf;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 240px;
+    }
+    .session-info .row { display: flex; justify-content: space-between; gap: 18px; }
+    .session-info .k { color: #8b94a7; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.14em; }
+    .session-info .v { color: #f59e0b; }
+    .role-pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 10.5px;
+        background: rgba(245,158,11,0.12);
+        color: #fbbf24;
+        border: 1px solid rgba(245,158,11,0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-family: "JetBrains Mono", monospace;
+    }
     .page-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
         gap: 14px;
         list-style: none;
         padding: 0;
-        margin: 12px 0 24px;
+        margin: 14px 0 28px;
     }
     .page-grid li a {
-        display: block;
-        padding: 16px 18px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 18px 20px;
+        background: linear-gradient(180deg, #1a1f2b, #161a23);
+        border: 1px solid #2a3142;
+        border-radius: 12px;
+        font-family: "Space Grotesk", sans-serif;
         font-weight: 600;
-        color: #1f2937;
-        transition: transform .1s, box-shadow .15s, border-color .15s;
+        font-size: 15px;
+        color: #e5e7eb !important;
+        transition: transform .12s, box-shadow .15s, border-color .15s, background .15s;
+        position: relative;
+        overflow: hidden;
+    }
+    .page-grid li a::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 0;
+        width: 3px; height: 100%;
+        background: linear-gradient(180deg, #f59e0b, #fb7185);
+        opacity: 0;
+        transition: opacity .15s;
+    }
+    .page-grid li a::after {
+        content: "→";
+        position: absolute;
+        right: 18px; top: 18px;
+        color: #5a6275;
+        font-size: 16px;
+        transition: color .15s, transform .15s;
     }
     .page-grid li a:hover {
         text-decoration: none;
-        border-color: #2563eb;
-        box-shadow: 0 4px 12px rgba(37,99,235,0.12);
+        border-color: #f59e0b;
+        background: linear-gradient(180deg, #1f2535, #181d28);
         transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.45), 0 0 0 1px rgba(245,158,11,0.25);
+    }
+    .page-grid li a:hover::before { opacity: 1; }
+    .page-grid li a:hover::after { color: #f59e0b; transform: translateX(3px); }
+    .page-grid li a span.tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        color: #8b94a7;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
     }
     .logout-btn {
         display: inline-block;
-        padding: 10px 18px;
-        background: #dc2626;
-        color: #fff !important;
-        border-radius: 8px;
+        padding: 10px 22px;
+        background: rgba(248,113,113,0.1);
+        border: 1px solid rgba(248,113,113,0.4);
+        color: #fecaca !important;
+        border-radius: 10px;
+        font-family: "Space Grotesk", sans-serif;
         font-weight: 600;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: background .15s, border-color .15s, color .15s;
     }
-    .logout-btn:hover { background: #b91c1c; text-decoration: none; }
+    .logout-btn:hover {
+        background: rgba(248,113,113,0.2);
+        border-color: #f87171;
+        color: #fff !important;
+        text-decoration: none;
+    }
 {% endblock %}
 
 {% block content %}
-    <h1>Dashboard</h1>
-    <p style="color:#6b7280;margin-top:0;">Welcome to the Car Company database app.</p>
-
-    <div class="session-info">
-        <strong>User:</strong> {{ session.get('username') }} &nbsp;·&nbsp;
-        <strong>Role:</strong> {{ session.get('role_name') }} &nbsp;·&nbsp;
-        <strong>ID:</strong> {{ user_id }}
+    <div class="hero">
+        <div>
+            <h1>Command Center</h1>
+            <p class="lede">Operational console for dealership inventory, sales, service, finance, and accounting workflows.</p>
+        </div>
+        <div class="session-info">
+            <div class="row"><span class="k">Operator</span><span class="v">{{ session.get('username') }}</span></div>
+            <div class="row"><span class="k">Role</span><span><span class="role-pill">{{ session.get('role_name') }}</span></span></div>
+            <div class="row"><span class="k">UID</span><span class="v">#{{ user_id }}</span></div>
+        </div>
     </div>
 
-    <h2>Pages</h2>
+    <h2>Modules</h2>
     <ul class="page-grid">
-        <li><a href="/customers">Customers</a></li>
-        <li><a href="/vehicles">Vehicles</a></li>
+        <li><a href="/customers"><span class="tag">01 / DIR</span>Customers</a></li>
+        <li><a href="/vehicles"><span class="tag">02 / INV</span>Vehicles</a></li>
         {% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
-            <li><a href="/sales">Sales</a></li>
+            <li><a href="/sales"><span class="tag">03 / TXN</span>Sales</a></li>
         {% endif %}
         {% if session.get('role_name') in ['Service Staff', 'Administrator'] %}
-            <li><a href="/services">Services</a></li>
+            <li><a href="/services"><span class="tag">04 / SVC</span>Services</a></li>
         {% endif %}
         {% if session.get('role_name') in ['Finance Staff', 'Administrator'] %}
-            <li><a href="/loans">Loans</a></li>
+            <li><a href="/loans"><span class="tag">05 / FIN</span>Loans</a></li>
         {% endif %}
         {% if session.get('role_name') in ['Accountant', 'Administrator'] %}
-            <li><a href="/accounting">Accounting</a></li>
+            <li><a href="/accounting"><span class="tag">06 / LDG</span>Accounting</a></li>
         {% endif %}
-        <li><a href="/reports">Reports</a></li>
+        <li><a href="/reports"><span class="tag">07 / RPT</span>Reports</a></li>
         {% if session.get('role_name') == 'Administrator' %}
-            <li><a href="/admin/users">Admin Users</a></li>
-            <li><a href="/admin/divisions">Admin Divisions</a></li>
-            <li><a href="/admin/departments">Admin Departments</a></li>
+            <li><a href="/admin/users"><span class="tag">A1 / USR</span>Admin Users</a></li>
+            <li><a href="/admin/divisions"><span class="tag">A2 / DIV</span>Admin Divisions</a></li>
+            <li><a href="/admin/departments"><span class="tag">A3 / DPT</span>Admin Departments</a></li>
         {% endif %}
     </ul>
-    <p><a href="/logout" class="logout-btn">Log Out</a></p>
+    <p><a href="/logout" class="logout-btn">Sign out</a></p>
 {% endblock %}
