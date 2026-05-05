@@ -12,15 +12,44 @@ set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
 PORT="${PORT:-8000}"
 
+port_in_use() {
+  # Portable port-3306 listen check (works without lsof/nc).
+  (exec 3<>/dev/tcp/127.0.0.1/3306) 2>/dev/null && { exec 3<&-; exec 3>&-; return 0; }
+  return 1
+}
+
 echo ">>> 1. Ensuring MySQL container is up..."
-if ! docker ps --format '{{.Names}}' | grep -q '^carco-mysql$'; then
-  if docker ps -a --format '{{.Names}}' | grep -q '^carco-mysql$'; then
-    docker start carco-mysql >/dev/null
-  else
-    docker run -d --name carco-mysql \
-      -e MYSQL_ROOT_PASSWORD=my-secret-pw \
-      -p 3306:3306 mysql:8.0 >/dev/null
-  fi
+if docker ps --format '{{.Names}}' | grep -q '^carco-mysql$'; then
+  echo "    carco-mysql container already running."
+elif docker ps -a --format '{{.Names}}' | grep -q '^carco-mysql$'; then
+  docker start carco-mysql >/dev/null
+elif port_in_use; then
+  cat <<EOF
+    ERROR: Port 3306 is already in use by another process on your machine.
+           This project's utils.py expects MySQL on 127.0.0.1:3306 with
+           user=root, password=my-secret-pw.
+
+    Free the port first, then re-run this script:
+
+      Native MySQL (most common cause):
+        macOS:   brew services stop mysql
+        Linux:   sudo systemctl stop mysql
+        Windows: stop the "MySQL" service in services.msc
+
+      Another Docker container:
+        docker ps                  # find what is using 3306
+        docker stop <container>
+
+      MySQL Workbench / MAMP / XAMPP:
+        Quit the application or stop its MySQL service.
+
+    Once 3306 is free, run:  bash start.sh
+EOF
+  exit 1
+else
+  docker run -d --name carco-mysql \
+    -e MYSQL_ROOT_PASSWORD=my-secret-pw \
+    -p 3306:3306 mysql:8.0 >/dev/null
 fi
 
 echo ">>> 2. Waiting for MySQL to accept connections..."
