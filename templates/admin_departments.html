@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Departments{% endblock %}
+
+{% block content %}
+<h1>Admin Departments</h1>
+<p><a href="/admin/users">Manage Users</a> | <a href="/admin/divisions">Manage Divisions</a></p>
+
+<h2>Add Department</h2>
+<form method="POST" action="/admin/departments">
+    <input type="hidden" name="action" value="create">
+    <label>Department name: <input type="text" name="name" placeholder="Dealers New Car Sales" required></label>
+    <label>Division: <select name="division_id" required>
+        {% for division in divisions %}<option value="{{ division.division_id }}">{{ division.name }}</option>{% endfor %}
+    </select></label>
+    <input type="submit" value="Add Department">
+</form>
+
+<table>
+    <tr><th>ID</th><th>Name</th><th>Division</th><th>Active</th><th>Update</th></tr>
+    {% for department in departments %}
+    <tr>
+        <td>{{ department.department_id }}</td>
+        <td>{{ department.name }}</td>
+        <td>{{ department.division }}</td>
+        <td>{{ department.active }}</td>
+        <td>
+            <form method="POST" action="/admin/departments">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="department_id" value="{{ department.department_id }}">
+                <label>Name: <input type="text" name="name" value="{{ department.name }}" required></label>
+                <label>Division: <select name="division_id">
+                    {% for division in divisions %}<option value="{{ division.division_id }}" {% if division.division_id == department.division_id %}selected{% endif %}>{{ division.name }}</option>{% endfor %}
+                </select></label>
+                <label><input type="checkbox" name="active" {% if department.active %}checked{% endif %}> Active</label>
+                <input type="submit" value="Update">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

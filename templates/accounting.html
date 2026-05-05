@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}Accounting{% endblock %}
+
+{% block content %}
+<h1>Accounting</h1>
+
+<form method="GET" action="/accounting">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search type or department">
+    <input type="submit" value="Search">
+</form>
+
+<h2>Add Manual Entry</h2>
+<form method="POST" action="/accounting">
+    <label>Transaction Type: <select name="type" required>
+        <option value="Expense">Expense</option>
+        <option value="Other">Other</option>
+    </select></label>
+    <label>Amount ($): <input type="text" inputmode="decimal" name="amount" placeholder="1500.00" required></label>
+    <label>Date: <input type="date" name="transaction_date" required></label>
+    <label>Department: <select name="department_id" required>
+        {% for department in departments %}<option value="{{ department.department_id }}">{{ department.name }}</option>{% endfor %}
+    </select></label>
+    <input type="submit" value="Add Entry">
+</form>
+
+<table>
+    <tr><th>ID</th><th>Type</th><th>Amount</th><th>Date</th><th>Department</th></tr>
+    {% for row in rows %}
+    <tr>
+        <td>{{ row.transaction_id }}</td>
+        <td>{{ row.type }}</td>
+        <td>{{ row.amount }}</td>
+        <td>{{ row.transaction_date }}</td>
+        <td>{{ row.department }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No accounting rows found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Car Company App{% endblock %}</title>
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        
+        /* Navigation Bar Styling */
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar .nav-right {
+            float: right;
+        }
+
+        /* Flash message styling */
+        .flash-messages { list-style-type: none; padding: 0; margin-bottom: 20px; }
+        .flash-message { padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
+        .flash-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .flash-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+        form { margin: 15px 0; }
+        input, select { margin: 3px; }
+        
+        {% block styles %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/">Home</a>
+        
+        <div class="nav-right">
+            {% if 'user_id' in session %}
+                <a href="/dashboard">Dashboard</a>
+                <a href="/customers">Customers</a>
+                <a href="/vehicles">Vehicles</a>
+                {% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
+                    <a href="/sales">Sales</a>
+                {% endif %}
+                {% if session.get('role_name') in ['Service Staff', 'Administrator'] %}
+                    <a href="/services">Services</a>
+                {% endif %}
+                {% if session.get('role_name') in ['Finance Staff', 'Administrator'] %}
+                    <a href="/loans">Loans</a>
+                {% endif %}
+                {% if session.get('role_name') in ['Accountant', 'Administrator'] %}
+                    <a href="/accounting">Accounting</a>
+                {% endif %}
+                <a href="/reports">Reports</a>
+                {% if session.get('role_name') == 'Administrator' %}
+                    <a href="/admin/users">Admin</a>
+                {% endif %}
+                <a href="/logout">Logout ({{ session.get('username') }})</a>
+            {% else %}
+                <a href="/">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+        {% for category, message in messages %}
+          <li class="flash-message flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}Vehicles{% endblock %}
+
+{% block content %}
+<h1>Vehicles</h1>
+
+<form method="GET" action="/vehicles">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search make, model, year, or VIN">
+    <input type="submit" value="Search">
+</form>
+
+{% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
+<h2>Add Vehicle</h2>
+<form method="POST" action="/vehicles">
+    <input type="hidden" name="action" value="create">
+    <label>Make: <input type="text" name="make" placeholder="Toyota" required></label>
+    <label>Model: <input type="text" name="model" placeholder="Camry" required></label>
+    <label>Year: <input type="text" inputmode="numeric" name="year" placeholder="2024" minlength="4" maxlength="4" pattern="[0-9]{4}" required></label>
+    <label>VIN digits: VIN <input type="text" name="vin" placeholder="10000000000014" minlength="14" maxlength="14" pattern="[0-9]{14}" required></label>
+    <label>Price ($): <input type="text" inputmode="decimal" name="price" placeholder="32000.00"></label>
+    <label>Mileage: <input type="text" inputmode="numeric" name="mileage" placeholder="0" pattern="[0-9]*"></label>
+    <label>Condition: <select name="condition_type"><option>New</option><option>Used</option></select></label>
+    <label>Status: <select name="status"><option>Available</option><option>Sold</option><option>Removed</option></select></label>
+    <input type="submit" value="Add Vehicle">
+</form>
+{% endif %}
+
+<table>
+    <tr><th>ID</th><th>Make</th><th>Model</th><th>Year</th><th>VIN</th><th>Price</th><th>Mileage</th><th>Condition</th><th>Status</th><th>Update</th></tr>
+    {% for vehicle in vehicles %}
+    <tr>
+        <td>{{ vehicle.vehicle_id }}</td>
+        <td>{{ vehicle.make }}</td>
+        <td>{{ vehicle.model }}</td>
+        <td>{{ vehicle.year }}</td>
+        <td>{{ vehicle.vin }}</td>
+        <td>{{ vehicle.price }}</td>
+        <td>{{ vehicle.mileage }}</td>
+        <td>{{ vehicle.condition_type }}</td>
+        <td>{{ vehicle.status }}</td>
+        <td>
+            {% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
+            <form method="POST" action="/vehicles" style="display:inline-block">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="vehicle_id" value="{{ vehicle.vehicle_id }}">
+                <label>Make: <input type="text" name="make" value="{{ vehicle.make or '' }}" required></label>
+                <label>Model: <input type="text" name="model" value="{{ vehicle.model or '' }}" required></label>
+                <label>Year: <input type="text" inputmode="numeric" name="year" value="{{ vehicle.year or '' }}" minlength="4" maxlength="4" pattern="[0-9]{4}" required></label>
+                <label>VIN digits: VIN <input type="text" name="vin" value="{{ vehicle.vin[3:] if vehicle.vin and vehicle.vin.startswith('VIN') else vehicle.vin }}" minlength="14" maxlength="14" pattern="[0-9]{14}" required></label>
+                <label>Price: <input type="text" inputmode="decimal" name="price" value="{{ vehicle.price or '' }}"></label>
+                <label>Mileage: <input type="text" inputmode="numeric" name="mileage" value="{{ vehicle.mileage or '' }}" pattern="[0-9]*"></label>
+                <label>Condition: <select name="condition_type">
+                    <option {% if vehicle.condition_type == 'New' %}selected{% endif %}>New</option>
+                    <option {% if vehicle.condition_type == 'Used' %}selected{% endif %}>Used</option>
+                </select></label>
+                <label>Status: <select name="status">
+                    <option {% if vehicle.status == 'Available' %}selected{% endif %}>Available</option>
+                    <option {% if vehicle.status == 'Sold' %}selected{% endif %}>Sold</option>
+                    <option {% if vehicle.status == 'Removed' %}selected{% endif %}>Removed</option>
+                </select></label>
+                <input type="submit" value="Update">
+            </form>
+            <form method="POST" action="/vehicles" style="display:inline-block" onsubmit="return confirm('Remove vehicle {{ vehicle.vehicle_id }} from inventory?')">
+                <input type="hidden" name="action" value="remove">
+                <input type="hidden" name="vehicle_id" value="{{ vehicle.vehicle_id }}">
+                <input type="submit" value="Remove">
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="10">No vehicles found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

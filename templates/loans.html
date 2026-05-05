@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}Loans{% endblock %}
+
+{% block content %}
+<h1>Loans</h1>
+
+<form method="GET" action="/loans">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search customer, VIN, or status">
+    <input type="submit" value="Search">
+</form>
+
+<h2>Create Loan</h2>
+<form method="POST" action="/loans">
+    <input type="hidden" name="action" value="create">
+    <label>Customer: <select name="customer_id" required>
+        {% for customer in customers %}<option value="{{ customer.customer_id }}">{{ customer.name }}</option>{% endfor %}
+    </select></label>
+    <label>Vehicle: <select name="vehicle_id" required>
+        {% for vehicle in vehicles %}<option value="{{ vehicle.vehicle_id }}">{{ vehicle.vin }} {{ vehicle.make }} {{ vehicle.model }}</option>{% endfor %}
+    </select></label>
+    <label>Loan Amount ($): <input type="text" inputmode="decimal" name="amount" placeholder="Loan amount" required></label>
+    <label>Interest Rate (%): <input type="text" inputmode="decimal" name="interest_rate" placeholder="Interest rate (%)" required></label>
+    <label>Term (months): <input type="text" inputmode="numeric" name="term" placeholder="Term (months)" pattern="[0-9]*" required></label>
+    <label>Monthly Payment ($): <input type="text" inputmode="decimal" name="monthly_payment" placeholder="Monthly payment" required></label>
+    <label>Approval Status: <select name="approval_status"><option>Pending</option><option>Approved</option><option>Rejected</option></select></label>
+    <input type="submit" value="Create Loan">
+</form>
+
+<h2>Record Payment</h2>
+<form method="POST" action="/loans">
+    <input type="hidden" name="action" value="payment">
+    <label>Loan: <select name="loan_id" required>
+        {% for loan in loans %}<option value="{{ loan.loan_id }}">Loan {{ loan.loan_id }} - {{ loan.customer }}</option>{% endfor %}
+    </select></label>
+    <label>Payment Date: <input type="date" name="payment_date" required></label>
+    <label>Payment Amount ($): <input type="text" inputmode="decimal" name="payment_amount" placeholder="Payment amount" required></label>
+    <label>Payment Method: <select name="payment_method" required>
+        <option value="Cash">Cash</option>
+        <option value="Credit Card">Credit Card</option>
+        <option value="Check">Check</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+    </select></label>
+    <input type="submit" value="Record Payment">
+</form>
+
+<h2>Loan Records</h2>
+<table>
+    <tr><th>ID</th><th>Customer</th><th>VIN</th><th>Vehicle</th><th>Amount</th><th>Interest</th><th>Term</th><th>Monthly</th><th>Status</th><th>Outstanding</th><th>Edit / Delete</th></tr>
+    {% for loan in loans %}
+    <tr>
+        <td>{{ loan.loan_id }}</td>
+        <td>{{ loan.customer }}</td>
+        <td>{{ loan.vin }}</td>
+        <td>{{ loan.vehicle }}</td>
+        <td>{{ loan.amount }}</td>
+        <td>{{ loan.interest_rate }}</td>
+        <td>{{ loan.term }}</td>
+        <td>{{ loan.monthly_payment }}</td>
+        <td>{{ loan.approval_status }}</td>
+        <td>{{ loan.outstanding_balance }}</td>
+        <td>
+            <form method="POST" action="/loans" style="display:inline">
+                <input type="hidden" name="action" value="update_loan">
+                <input type="hidden" name="loan_id" value="{{ loan.loan_id }}">
+                <select name="approval_status">
+                    <option {% if loan.approval_status=='Pending' %}selected{% endif %} value="Pending">Pending</option>
+                    <option {% if loan.approval_status=='Approved' %}selected{% endif %} value="Approved">Approved</option>
+                    <option {% if loan.approval_status=='Rejected' %}selected{% endif %} value="Rejected">Rejected</option>
+                </select>
+                <label>Amount: <input type="text" inputmode="decimal" name="amount" value="{{ loan.amount }}" style="width:80px" required></label>
+                <label>Interest: <input type="text" inputmode="decimal" name="interest_rate" value="{{ loan.interest_rate }}" style="width:60px" required></label>
+                <label>Term: <input type="text" inputmode="numeric" name="term" value="{{ loan.term }}" style="width:50px" pattern="[0-9]*" required></label>
+                <label>Monthly: <input type="text" inputmode="decimal" name="monthly_payment" value="{{ loan.monthly_payment }}" style="width:80px" required></label>
+                <input type="submit" value="Update">
+            </form>
+            <form method="POST" action="/loans" style="display:inline" onsubmit="return confirm('Delete loan {{ loan.loan_id }}?')">
+                <input type="hidden" name="action" value="delete_loan">
+                <input type="hidden" name="loan_id" value="{{ loan.loan_id }}">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="11">No loans found.</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Payment History</h2>
+<table>
+    <tr><th>ID</th><th>Loan</th><th>Date</th><th>Amount</th><th>Payment Method</th><th>Remaining Balance</th></tr>
+    {% for payment in payments %}
+    <tr>
+        <td>{{ payment.payment_id }}</td>
+        <td>{{ payment.loan_id }}</td>
+        <td>{{ payment.payment_date }}</td>
+        <td>{{ payment.amount }}</td>
+        <td>{{ payment.payment_method }}</td>
+        <td>{{ payment.remaining_balance }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No payments found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

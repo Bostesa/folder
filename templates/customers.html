@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}Customers{% endblock %}
+
+{% block content %}
+<h1>Customers</h1>
+
+<form method="GET" action="/customers">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search name, email, or phone">
+    <input type="submit" value="Search">
+</form>
+
+{% if session.get('role_name') != 'Accountant' %}
+<h2>Add Customer</h2>
+<form method="POST" action="/customers">
+    <input type="hidden" name="action" value="create">
+    <label>Name: <input type="text" name="name" placeholder="Full name" required></label>
+    <label>Address: <input type="text" name="address" placeholder="Street address"></label>
+    <label>Email: <input type="email" name="email" placeholder="email@example.com"></label>
+    <label>Phone numbers (10 digits each, comma-separated, e.g. 5551234567, 5559876543):
+        <input type="text" name="phones" placeholder="5551234567, 5559876543">
+    </label>
+    <input type="submit" value="Add Customer">
+</form>
+{% endif %}
+
+<h2>Customer List</h2>
+<table>
+    <tr><th>ID</th><th>Name</th><th>Address</th><th>Email</th><th>Phones</th><th>Update</th></tr>
+    {% for customer in customers %}
+    <tr>
+        <td>{{ customer.customer_id }}</td>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.address }}</td>
+        <td>{{ customer.email }}</td>
+        <td>{{ customer.phones or '' }}</td>
+        <td>
+            {% if session.get('role_name') != 'Accountant' %}
+            <form method="POST" action="/customers">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="customer_id" value="{{ customer.customer_id }}">
+                <label>Name: <input type="text" name="name" value="{{ customer.name }}" required></label>
+                <label>Address: <input type="text" name="address" value="{{ customer.address or '' }}"></label>
+                <label>Email: <input type="email" name="email" value="{{ customer.email or '' }}"></label>
+                <label>Phones: <input type="text" name="phones" value="{{ customer.phones or '' }}" placeholder="5551234567, 5559876543"></label>
+                <input type="submit" value="Update">
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No customers found.</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Purchase, Service, And Loan History</h2>
+<table>
+    <tr><th>Customer</th><th>Type</th><th>VIN</th><th>Date</th><th>Amount</th></tr>
+    {% for item in histories %}
+    <tr>
+        <td>{{ item.customer_name }}</td>
+        <td>{{ item.record_type }}</td>
+        <td>{{ item.vin }}</td>
+        <td>{{ item.record_date or '' }}</td>
+        <td>{{ item.amount }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No history found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

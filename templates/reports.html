@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<h1>Reports</h1>
+
+{% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
+<h2>Sales Totals</h2>
+<table>
+    <tr><th>Vehicles Sold</th><th>Revenue</th></tr>
+    {% for row in data.sales_totals %}<tr><td>{{ row.vehicles_sold }}</td><td>{{ row.revenue }}</td></tr>{% endfor %}
+</table>
+
+<h2>Sales By Department</h2>
+<table>
+    <tr><th>Department</th><th>Vehicles Sold</th><th>Revenue</th></tr>
+    {% for row in data.sales_by_department %}<tr><td>{{ row.department }}</td><td>{{ row.vehicles_sold }}</td><td>{{ row.revenue }}</td></tr>{% endfor %}
+</table>
+
+<h2>Sales By Month</h2>
+<table>
+    <tr><th>Month</th><th>Vehicles Sold</th><th>Revenue</th></tr>
+    {% for row in data.sales_by_month %}<tr><td>{{ row.sale_month }}</td><td>{{ row.vehicles_sold }}</td><td>{{ row.revenue }}</td></tr>{% endfor %}
+</table>
+{% endif %}
+
+{% if session.get('role_name') in ['Service Staff', 'Administrator'] %}
+<h2>Service Totals</h2>
+<table>
+    <tr><th>Service Count</th><th>Service Revenue</th></tr>
+    {% for row in data.service_totals %}<tr><td>{{ row.service_count }}</td><td>{{ row.service_revenue }}</td></tr>{% endfor %}
+</table>
+
+<h2>Most Common Service Types</h2>
+<table>
+    <tr><th>Type</th><th>Count</th></tr>
+    {% for row in data.service_types %}<tr><td>{{ row.service_type }}</td><td>{{ row.count }}</td></tr>{% endfor %}
+</table>
+{% endif %}
+
+{% if session.get('role_name') in ['Finance Staff', 'Administrator'] %}
+<h2>Loan Statuses</h2>
+<table>
+    <tr><th>Status</th><th>Count</th></tr>
+    {% for row in data.loan_statuses %}<tr><td>{{ row.approval_status }}</td><td>{{ row.count }}</td></tr>{% endfor %}
+</table>
+
+<h2>Outstanding Loan Balances</h2>
+<table>
+    <tr><th>Loan ID</th><th>Customer</th><th>Outstanding Balance</th></tr>
+    {% for row in data.loan_balances %}<tr><td>{{ row.loan_id }}</td><td>{{ row.customer }}</td><td>{{ row.outstanding_balance }}</td></tr>{% endfor %}
+</table>
+{% endif %}
+
+{% if session.get('role_name') in ['Accountant', 'Administrator'] %}
+<h2>Accounting By Type</h2>
+<table>
+    <tr><th>Type</th><th>Total</th></tr>
+    {% for row in data.accounting_by_type %}<tr><td>{{ row.type }}</td><td>{{ row.total }}</td></tr>{% endfor %}
+</table>
+
+<h2>Accounting By Department</h2>
+<table>
+    <tr><th>Department</th><th>Total</th></tr>
+    {% for row in data.accounting_by_department %}<tr><td>{{ row.department }}</td><td>{{ row.total }}</td></tr>{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

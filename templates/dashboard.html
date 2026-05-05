@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+    .dashboard-container { 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            max-width: 700px;
+        }
+        .session-info {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .logout-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .logout-btn:hover { background-color: #c82333; }
+{% endblock %}
+
+{% block content %}
+    <div class="dashboard-container">
+        <h1>Car Company Dashboard</h1>
+        <p>You are logged in to the car company database app.</p>
+        
+        <div class="session-info">
+            User: <strong>{{ session.get('username') }}</strong><br>
+            Role: <strong>{{ session.get('role_name') }}</strong><br>
+            User ID: <strong>{{ user_id }}</strong>
+        </div>
+
+        <h2>Pages</h2>
+        <ul>
+            <li><a href="/customers">Customers</a></li>
+            <li><a href="/vehicles">Vehicles</a></li>
+            {% if session.get('role_name') in ['Sales Staff', 'Administrator'] %}
+                <li><a href="/sales">Sales</a></li>
+            {% endif %}
+            {% if session.get('role_name') in ['Service Staff', 'Administrator'] %}
+                <li><a href="/services">Services</a></li>
+            {% endif %}
+            {% if session.get('role_name') in ['Finance Staff', 'Administrator'] %}
+                <li><a href="/loans">Loans</a></li>
+            {% endif %}
+            {% if session.get('role_name') in ['Accountant', 'Administrator'] %}
+                <li><a href="/accounting">Accounting</a></li>
+            {% endif %}
+            <li><a href="/reports">Reports</a></li>
+            {% if session.get('role_name') == 'Administrator' %}
+                <li><a href="/admin/users">Admin Users</a></li>
+                <li><a href="/admin/divisions">Admin Divisions</a></li>
+                <li><a href="/admin/departments">Admin Departments</a></li>
+            {% endif %}
+        </ul>
+        <p><a href="/logout" class="logout-btn">Log Out</a></p>
+    </div>
+{% endblock %}

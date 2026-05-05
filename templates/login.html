@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Login Page</title>
+    <style>
+        /* Base styling for all flash messages */
+        .flash-messages {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .flash-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        /* Specific styling for the "error" category */
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Specific styling for the "success" category */
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <h2>Login</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+        {% for category, message in messages %}
+          <li class="flash-message flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {# This is a comment for Jinja2 library which manages the html templates
+    {% with messages = get_flashed_messages() %}: This grabs any messages waiting in the session queue. 
+    {% if messages %}: This checks if the queue is empty. If there are no messages, it safely skips the block, and the user sees nothing.
+    {% for message in messages %}: If there are messages, it loops through them and generates an HTML list item <li> for each one. Once they are fetched, Flask automatically clears them from the session so they don't appear again on a page refresh. 
+    #}
+    <form method="POST" action="/">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>

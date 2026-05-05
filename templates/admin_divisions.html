@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Divisions{% endblock %}
+
+{% block content %}
+<h1>Admin Divisions</h1>
+<p><a href="/admin/users">Manage Users</a> | <a href="/admin/departments">Manage Departments</a></p>
+
+<h2>Add Division</h2>
+<form method="POST" action="/admin/divisions">
+    <input type="hidden" name="action" value="create">
+    <input type="text" name="name" placeholder="Division name" required>
+    <input type="submit" value="Add">
+</form>
+
+<table>
+    <tr><th>ID</th><th>Name</th><th>Update</th></tr>
+    {% for division in divisions %}
+    <tr>
+        <td>{{ division.division_id }}</td>
+        <td>{{ division.name }}</td>
+        <td>
+            <form method="POST" action="/admin/divisions">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="division_id" value="{{ division.division_id }}">
+                <input type="text" name="name" value="{{ division.name }}" required>
+                <input type="submit" value="Update">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<h1>Maintenance Services</h1>
+
+<form method="GET" action="/services">
+    <input type="text" name="vin" value="{{ vin }}" placeholder="Search by VIN or vehicle ID">
+    <input type="submit" value="Search History">
+</form>
+
+<h2>Create Service Record</h2>
+<form method="POST" action="/services">
+    <input type="hidden" name="action" value="create">
+    <label>Customer: <select name="customer_id" required>
+        {% for customer in customers %}<option value="{{ customer.customer_id }}">{{ customer.name }}</option>{% endfor %}
+    </select></label>
+    <label>Vehicle: <select name="vehicle_id" required>
+        {% for vehicle in vehicles %}<option value="{{ vehicle.vehicle_id }}">{{ vehicle.vin }} {{ vehicle.make }} {{ vehicle.model }}</option>{% endfor %}
+    </select></label>
+    <label>Service User: <select name="user_id" required>
+        {% for employee in service_employees %}<option value="{{ employee.user_id }}">{{ employee.name }}</option>{% endfor %}
+    </select></label>
+    <label>Service Type: <input type="text" name="service_type" placeholder="Oil Change" required></label>
+    <label>Service Date: <input type="date" name="service_date" required></label>
+    <label>Total Service Cost ($): <input type="text" inputmode="decimal" name="cost" placeholder="Labor + service charge" required></label>
+    <label>Parts used (comma-separated names):
+        <input type="text" name="parts" placeholder="oil filter, brake pad">
+    </label>
+    <label>Total Parts Cost ($): <input type="text" inputmode="decimal" name="part_total_cost" placeholder="Total for all listed parts"></label>
+    <input type="submit" value="Create Service">
+</form>
+
+<table>
+    <tr><th>ID</th><th>Customer</th><th>VIN</th><th>Vehicle</th><th>Technician</th><th>Type</th><th>Date</th><th>Cost</th><th>Parts</th><th>Update</th></tr>
+    {% for service in services %}
+    <tr>
+        <td>{{ service.service_id }}</td>
+        <td>{{ service.customer }}</td>
+        <td>{{ service.vin }}</td>
+        <td>{{ service.vehicle }}</td>
+        <td>{{ service.technician }}</td>
+        <td>{{ service.service_type }}</td>
+        <td>{{ service.service_date }}</td>
+        <td>{{ service.cost }}</td>
+        <td>{{ service.parts or '' }}</td>
+        <td>
+            <form method="POST" action="/services">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="service_id" value="{{ service.service_id }}">
+                <label>Type: <input type="text" name="service_type" value="{{ service.service_type }}" required></label>
+                <label>Date: <input type="date" name="service_date" value="{{ service.service_date }}" required></label>
+                <label>Cost: <input type="text" inputmode="decimal" name="cost" value="{{ service.cost }}" required></label>
+                <input type="submit" value="Update">
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="10">No service records found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

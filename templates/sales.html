@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}Sales{% endblock %}
+
+{% block content %}
+<h1>Sales</h1>
+
+<form method="GET" action="/sales">
+    <input type="text" name="q" value="{{ q }}" placeholder="Customer, model, VIN, or department">
+    <input type="date" name="start_date" value="{{ start_date }}">
+    <input type="date" name="end_date" value="{{ end_date }}">
+    <input type="submit" value="Search">
+</form>
+
+<h2>Create Sale</h2>
+<form method="POST" action="/sales">
+    <label>Customer: <select name="customer_id" required>
+        {% for customer in customers %}<option value="{{ customer.customer_id }}">{{ customer.name }}</option>{% endfor %}
+    </select></label>
+    <label>Available Vehicle: <select name="vehicle_id" required>
+        {% for vehicle in available_vehicles %}<option value="{{ vehicle.vehicle_id }}">{{ vehicle.vin }} {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</option>{% endfor %}
+    </select></label>
+    <label>Sales User: <select name="user_id" required>
+        {% for employee in sales_employees %}<option value="{{ employee.user_id }}">{{ employee.name }}</option>{% endfor %}
+    </select></label>
+    <label>Sales Department: <select name="department_id" required>
+        {% for department in sales_departments %}<option value="{{ department.department_id }}">{{ department.name }}</option>{% endfor %}
+    </select></label>
+    <label>Sale Price ($): <input type="text" inputmode="decimal" name="sale_price" placeholder="Sale price" required></label>
+    <label>Sale Date: <input type="date" name="sale_date" required></label>
+    <label>Payment Method: <select name="payment_method" required>
+        <option value="Cash">Cash</option>
+        <option value="Credit Card">Credit Card</option>
+        <option value="Check">Check</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+        <option value="Financing">Financing</option>
+    </select></label>
+    <label><input type="checkbox" name="financing_option"> Financing</label>
+    <input type="submit" value="Create Sale">
+</form>
+
+<table>
+    <tr><th>ID</th><th>Customer</th><th>Vehicle</th><th>VIN</th><th>Employee</th><th>Department</th><th>Price</th><th>Date</th><th>Pay Method</th><th>Financing</th></tr>
+    {% for sale in sales %}
+    <tr>
+        <td>{{ sale.sale_id }}</td>
+        <td>{{ sale.customer }}</td>
+        <td>{{ sale.vehicle }}</td>
+        <td>{{ sale.vin }}</td>
+        <td>{{ sale.employee }}</td>
+        <td>{{ sale.department }}</td>
+        <td>{{ sale.sale_price }}</td>
+        <td>{{ sale.sale_date }}</td>
+        <td>{{ sale.payment_method }}</td>
+        <td>{{ sale.financing_option }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="10">No sales found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

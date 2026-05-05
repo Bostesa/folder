@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Users{% endblock %}
+
+{% block content %}
+<h1>Admin Users</h1>
+<p><a href="/admin/divisions">Manage Divisions</a> | <a href="/admin/departments">Manage Departments</a></p>
+
+<h2>Create User</h2>
+<form method="POST" action="/admin/users">
+    <input type="hidden" name="action" value="create">
+    <label>Username: <input type="text" name="username" placeholder="Login username" required></label>
+    <label>Password: <input type="password" name="password" placeholder="Password" required></label>
+    <label>Name: <input type="text" name="name" placeholder="Staff full name"></label>
+    <label>Email: <input type="email" name="email" placeholder="user@carco.com"></label>
+    <label>Address: <input type="text" name="address" placeholder="Staff address"></label>
+    <label>Department: <select name="department_id">
+        <option value="">No department</option>
+        {% for department in departments %}<option value="{{ department.department_id }}">{{ department.name }}</option>{% endfor %}
+    </select></label>
+    <label>Role: <select name="role_id" required>
+        {% for role in roles %}<option value="{{ role.role_id }}">{{ role.role_name }}</option>{% endfor %}
+    </select></label>
+    <input type="submit" value="Create User">
+</form>
+
+<table>
+    <tr><th>ID</th><th>Username</th><th>Name</th><th>Email</th><th>Department</th><th>Role</th><th>Active</th><th>Update</th></tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.user_id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.name or '' }}</td>
+        <td>{{ user.email or '' }}</td>
+        <td>{{ user.department or '' }}</td>
+        <td>{{ user.role_name }}</td>
+        <td>{{ user.active }}</td>
+        <td>
+            <form method="POST" action="/admin/users">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                <label>Name: <input type="text" name="name" value="{{ user.name or '' }}"></label>
+                <label>Email: <input type="email" name="email" value="{{ user.email or '' }}"></label>
+                <label>Address: <input type="text" name="address" value="{{ user.address or '' }}"></label>
+                <label>Department: <select name="department_id">
+                    <option value="">No department</option>
+                    {% for department in departments %}<option value="{{ department.department_id }}" {% if department.department_id == user.department_id %}selected{% endif %}>{{ department.name }}</option>{% endfor %}
+                </select></label>
+                <select name="role_id">
+                    {% for role in roles %}<option value="{{ role.role_id }}" {% if role.role_name == user.role_name %}selected{% endif %}>{{ role.role_name }}</option>{% endfor %}
+                </select>
+                <label><input type="checkbox" name="active" {% if user.active %}checked{% endif %}> Active</label>
+                <input type="submit" value="Update">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
